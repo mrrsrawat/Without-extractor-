@@ -77,8 +77,12 @@ async def start(bot, message):
   random_image_url = random.choice(image_list)
 
   keyboard = [ 
-      [InlineKeyboardButton("🚀 Physics Wallah without Purchase 🚀", callback_data="pwwp")],
-      [InlineKeyboardButton("🚀 Classplus without Purchase 🚀", callback_data="cpwp")]
+      [InlineKeyboardButton("🔘 Physics Wallah without Purchase 🔘", callback_data="pwwp")],
+      [InlineKeyboardButton("🔘 Classplus without Purchase 🔘", callback_data="cpwp")],
+      [
+      InlineKeyboardButton(text="📞 Contact", url="http://t.me/krs_study_helper_bbot"),
+      InlineKeyboardButton(text="🔍 Channel", url="http://t.me/krs_study_helper_bbot"),
+    ]
  ]
   
 
@@ -86,7 +90,17 @@ async def start(bot, message):
 
   await message.reply_photo(
     photo=random_image_url,
-    caption="PLEASE👇PRESS👇HERE",
+    caption="🔘 Hey! I'm All-in-one Txt Extractor Bot! 🔘
+
+
+🔘 If you run into any issue or have trouble extracting a text file, feel free to reach out to Admin.
+
+🔘 Have an app you'd like to add? Don't hesitate to contact me anytime!
+
+
+🔘 Select an option below to get started!
+
+ ☑️ JAI BAJRANG BALI ☑️",
     quote=True,
     reply_markup=reply_markup
   )
@@ -359,7 +373,7 @@ async def pwwp_callback(bot, callback_query):
     await callback_query.answer()
     
     if user_id not in auth_users:
-        await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot DM for access @A_S_9162**")
+        await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot DM for access @krs_study_helper_bbot**")
         return
         
     THREADPOOL.submit(asyncio.run, process_pwwp(bot, callback_query.message, user_id))
@@ -790,7 +804,7 @@ async def cpwp_callback(bot, callback_query):
     await callback_query.answer()
     
     if user_id not in auth_users:
-        await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot**")
+        await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot @krs_study_helper_bbot**")
         return
             
     THREADPOOL.submit(asyncio.run, process_cpwp(bot, callback_query.message, user_id))
