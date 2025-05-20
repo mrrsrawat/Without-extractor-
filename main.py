@@ -39,6 +39,8 @@ THREADPOOL = ThreadPoolExecutor(max_workers=1000)
 import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+thumb = os.path.join(os.path.dirname(__file__), "logo.jpg")
+
 # Bot credentials from environment variables (Render compatible)
 API_ID = int(os.environ.get("API_ID",  "27900743"))
 API_HASH = os.environ.get("API_HASH", "ebb06ea8d41420e60b29140dcee902fc")
@@ -90,7 +92,7 @@ async def start(bot, message):
 
   await message.reply_photo(
     photo=random_image_url,
-    caption="🔘 Hey! I'm All-in-one Txt Extractor Bot! 🔘\n\n🔘 If you run into any issue or have trouble extracting a text file, feel free to reach out to Admin.\n\n🔘 Have an app you'd like to add? Don't hesitate to contact me anytime!\n\n🔘 Select an option below to get started!\n\n☑️ JAI BAJRANG BALI ☑️",
+    caption="👋 Hey! I'm All-in-one Txt Extractor Bot! \n\n📚 If you run into any issue or have trouble extracting a text file, feel free to reach out to Admin.\n\n 📙 Have an app you'd like to add? Don't hesitate to contact me anytime!\n\n📖 Select an option below to get started!\n\n[☑️ JAI BAJRANG BALI ☑️](http://t.me/krs_study_helper_bbot)",
     quote=True,
     reply_markup=reply_markup
   )
@@ -602,14 +604,14 @@ async def process_pwwp(bot: Client, m: Message, user_id: int):
                             
                 await editable.delete(True)
                 
-                caption = f"**Batch Name : ```\n{selected_batch_name}``````\nTime Taken : {formatted_time}```**"
+                caption = f"**\n╾───•🚩 𝐉𝐀𝐈 𝐁𝐀𝐉𝐑𝐀𝐍𝐆 𝐁𝐀𝐋𝐈 🚩•───╼\n\n🔘 𝐁𝐀𝐓𝐂𝐇 𝐍𝐀𝐌𝐄 ➥ {selected_batch_name}\n\n🏴 𝐓𝐢𝐦𝐞 𝐓𝐚𝐤𝐞𝐧 ➥ {formatted_time}\n\n ━━━━━━━━━━━━━━━━━━━━\n ᴇxᴛʀᴀᴄᴛɪᴏɴ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ☑️**"
                         
                 files = [f"{clean_file_name}.{ext}" for ext in ["txt", "zip", "json"]]
                 for file in files:
                     file_ext = os.path.splitext(file)[1][1:]
                     try:
                         with open(file, 'rb') as f:
-                            doc = await m.reply_document(document=f, caption=caption, file_name=f"{clean_batch_name}.{file_ext}")
+                            doc = await m.reply_document(document=f, thumb=thumb, caption=caption, file_name=f"{clean_batch_name}.{file_ext}")
                     except FileNotFoundError:
                         logging.error(f"File not found: {file}")
                     except Exception as e:
@@ -871,7 +873,7 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
                                 for cnt, course in enumerate(courses):
                                     name = course['name']
                                     price = course['finalPrice']
-                                    text += f'{cnt + 1}. ```\n{name} 💵₹{price}```\n'
+                                    text += f'{cnt + 1}. ```\n📚 {name} ₹{price} ☑️```\n'
 
                                 await editable.edit(f"**Send index number of the Category Name\n\n{text}\nIf Your Batch Not Listed Then Enter Your Batch Name**")
                             
@@ -911,7 +913,7 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
                                                 for cnt, course in enumerate(courses):
                                                     name = course['name']
                                                     price = course['finalPrice']
-                                                    text += f'{cnt + 1}. ```\n{name} 💵₹{price}```\n'
+                                                    text += f'{cnt + 1}. ```\n📚 {name} ₹{price} ☑️```\n'
                                                 await editable.edit(f"**Send index number of the Batch to download.\n\n{text}**")
                                             
                                                 try:
@@ -991,10 +993,10 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
 
                                             await editable.delete(True)
                                         
-                                            caption = f"**App Name : ```\n{App_Name}({org_code})```\nBatch Name : ```\n{selected_batch_name}``````\n🎬 : {video_count} | 📁 : {pdf_count} | 🖼  : {image_count}``````\nTime Taken : {formatted_time}```**"
+                                            caption = f"**\n╾───•🚩 𝐉𝐀𝐈 𝐁𝐀𝐉𝐑𝐀𝐍𝐆 𝐁𝐀𝐋𝐈 🚩•───╼\n\n✿༺ 𝔸ℙℙ ℕ𝔸𝕄𝔼 ༻✿ : {App_Name}({org_code})\n\n🔘 𝐁𝐀𝐓𝐂𝐇 𝐍𝐀𝐌𝐄 ➥ {selected_batch_name}\n\n🏴 𝐕𝐢𝐝𝐞𝐨 : {video_count} | 🏴 𝐏𝐝𝐟 : {pdf_count} | 🏴 𝐈𝐦𝐚𝐠𝐞 : {image_count}\n\n🔘 𝐓𝐢𝐦𝐞 𝐓𝐚𝐤𝐞𝐧 ➥ {formatted_time}\n\n ━━━━━━━━━━━━━━━━━━━━\n ᴇxᴛʀᴀᴄᴛɪᴏɴ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ☑️ **"
                                         
                                             with open(file, 'rb') as f:
-                                                doc = await m.reply_document(document=f, caption=caption, file_name=f"{clean_batch_name}.txt")
+                                                doc = await m.reply_document(document=f, thumb=thumb, caption=caption, file_name=f"{clean_batch_name}.txt")
 
                                             os.remove(file)
 
