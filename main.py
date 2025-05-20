@@ -475,7 +475,7 @@ async def process_pwwp(bot: Client, m: Message, user_id: int):
                 text = ''
                 for cnt, course in enumerate(courses):
                     name = course['name']
-                    text += f"{cnt + 1}. ```\n{name}```\n"
+                    text += f"{cnt + 1}. ````\n📚 {name}```\n"
                 await editable.edit(f"**Send index number of the course to download.\n\n{text}\n\nIf Your Batch Not Listed Above Enter - No**")
             
                 try:
@@ -500,7 +500,7 @@ async def process_pwwp(bot: Client, m: Message, user_id: int):
                         text = ''
                         for cnt, course in enumerate(courses):
                             name = course['batch_name']
-                            text += f"{cnt + 1}. ```\n{name}```\n"
+                            text += f"{cnt + 1}. ````\n📚 {name}```\n"
                             
                         await editable.edit(f"**Send index number of the course to download.\n\n{text}**")
                 
