@@ -963,15 +963,15 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
 
 # inside your extract_batch function, only replacing process_course_contents
 
-        async def process_course_contents(course_id, folder_id=0, folder_path=""):
-            """Fetch and process course content recursively."""
-            result = []
-            url = f'{apiurl}/v2/course/content/get?courseId={course_id}&folderId={folder_id}'
+            async def process_course_contents(course_id, folder_id=0, folder_path=""):
+                """Fetch and process course content recursively."""
+                result = []
+                url = f'{apiurl}/v2/course/content/get?courseId={course_id}&folderId={folder_id}'
 
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers) as resp:
-                    course_data = await resp.json()
-                    course_data = course_data["data"]["courseContent"]
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, headers=headers) as resp:
+                        course_data = await resp.json()
+                        course_data = course_data["data"]["courseContent"]
                     
             tasks = []
             for item in course_data:
