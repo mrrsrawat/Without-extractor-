@@ -1025,14 +1025,14 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
                     file.write(''.join(extracted_data))  
                 return file_path
 
-        extracted_data, live_videos = await asyncio.gather(
-            process_course_contents(batch_id),
-            fetch_live_videos(batch_id)
-        )
+            extracted_data, live_videos = await asyncio.gather(
+                process_course_contents(batch_id),
+                fetch_live_videos(batch_id)
+            )
 
-        extracted_data.extend(live_videos)
+            extracted_data.extend(live_videos)
 
-        file_path = await write_to_file(extracted_data)
+            file_path = await write_to_file(extracted_data)
  
                                         
                                             caption = f"**\n╾───•🚩 𝐉𝐀𝐈 𝐁𝐀𝐉𝐑𝐀𝐍𝐆 𝐁𝐀𝐋𝐈 🚩•───╼\n\n✿༺ 𝔸ℙℙ ℕ𝔸𝕄𝔼 ༻✿ : {App_Name}({org_code})\n\n🔘 𝐁𝐀𝐓𝐂𝐇 𝐍𝐀𝐌𝐄 ➥ {selected_batch_name}\n\n🏴 𝐕𝐢𝐝𝐞𝐨 : {video_count} | 🏴 𝐏𝐝𝐟 : {pdf_count} | 🏴 𝐈𝐦𝐚𝐠𝐞 : {image_count}\n\n🔘 𝐓𝐢𝐦𝐞 𝐓𝐚𝐤𝐞𝐧 ➥ {formatted_time}\n\n ━━━━━━━━━━━━━━━━━━━━\n ᴇxᴛʀᴀᴄᴛɪᴏɴ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ☑️ **"
