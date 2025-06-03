@@ -961,37 +961,79 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
                                     'courseId': f'{selected_batch_id}',
                                 }
 
-                                async with session.get(f"https://api.classplusapp.com/v2/course/preview/org/info", params=params, headers=batch_headers) as response:
-                                    if response.status == 200:
-                                        res_json = await response.json()
-                                        Batch_Token = res_json['data']['hash']
-                                        App_Name = res_json['data']['name']
+# inside your extract_batch function, only replacing process_course_contents
 
-                                        await editable.edit(f"**Extracting course : {selected_batch_name} ...**")
+        async def process_course_contents(course_id, folder_id=0, folder_path=""):
+            """Fetch and process course content recursively."""
+            result = []
+            url = f'{apiurl}/v2/course/content/get?courseId={course_id}&folderId={folder_id}'
 
-                                        start_time = time.time()
-                                        course_content, video_count, pdf_count, image_count = await get_cpwp_course_content(session, headers, Batch_Token)
-                                    
-                                        if course_content:
-                                            file = f"{clean_file_name}.txt"
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers) as resp:
+                    course_data = await resp.json()
+                    course_data = course_data["data"]["courseContent"]
+                    
+            tasks = []
+            for item in course_data:
+                content_type = str(item['contentType'])
+                sub_id = item['id']
+                sub_name = item['name']
 
-                                            with open(file, 'w') as f:
-                                                f.write(''.join(course_content))
+                if content_type in ("2", "3"):  # Video or PDF
+                    url = item["url"]
+                    full_name = f"{folder_path}{sub_name}: {url}\n"
+                    result.append(full_name)
+                elif content_type == "1":  # Folder
+                 new_folder_path = f"{folder_path}{sub_name} - "
+                 tasks.append(process_course_contents(course_id, sub_id, new_folder_path))
 
-                                            end_time = time.time()
-                                            response_time = end_time - start_time
-                                            minutes = int(response_time // 60)
-                                            seconds = int(response_time % 60)
+            sub_contents = await asyncio.gather(*tasks)
+            for sub_content in sub_contents:
+                result.extend(sub_content)
 
-                                            if minutes == 0:
-                                                if seconds < 1:
-                                                    formatted_time = f"{response_time:.2f} seconds"
-                                                else:
-                                                    formatted_time = f"{seconds} seconds"
-                                            else:
-                                                formatted_time = f"{minutes} minutes {seconds} seconds"
+            return result
 
-                                            await editable.delete(True)
+        async def fetch_live_videos(course_id):
+            """Fetch live videos from the API."""
+            outputs = []
+            async with aiohttp.ClientSession() as session:
+                try:
+                    url = f"{apiurl}/v2/course/live/list/videos?type=2&entityId={course_id}&limit=9999&offset=0"
+                    async with session.get(url, headers=headers) as response:
+                        j = await response.json()
+                        if "data" in j and "list" in j["data"]:
+                            for video in j["data"]["list"]:
+                                name = video.get("name", "Unknown Video")
+                                video_url = video.get("url", "")
+                                if video_url:
+                                    outputs.append(f"{name}: {video_url}\n")
+                except Exception as e:
+                    print(f"Error fetching live videos: {e}")
+
+            return outputs
+
+        async def write_to_file(extracted_data):
+            """Write data to a text file asynchronously."""
+            # Define characters to remove and replace
+            invalid_chars = '\t:/+#|@*.'
+            # Create a clean filename by removing invalid characters and replacing underscore with space
+            clean_name = ''.join(char for char in batch_name if char not in invalid_chars)
+            clean_name = clean_name.replace('_', ' ')
+            file_path = f"{clean_name}.txt"
+            
+            with open(file_path, "w", encoding='utf-8') as file:
+                file.write(''.join(extracted_data))  
+            return file_path
+
+        extracted_data, live_videos = await asyncio.gather(
+            process_course_contents(batch_id),
+            fetch_live_videos(batch_id)
+        )
+
+        extracted_data.extend(live_videos)
+
+        file_path = await write_to_file(extracted_data)
+ 
                                         
                                             caption = f"**\n╾───•🚩 𝐉𝐀𝐈 𝐁𝐀𝐉𝐑𝐀𝐍𝐆 𝐁𝐀𝐋𝐈 🚩•───╼\n\n✿༺ 𝔸ℙℙ ℕ𝔸𝕄𝔼 ༻✿ : {App_Name}({org_code})\n\n🔘 𝐁𝐀𝐓𝐂𝐇 𝐍𝐀𝐌𝐄 ➥ {selected_batch_name}\n\n🏴 𝐕𝐢𝐝𝐞𝐨 : {video_count} | 🏴 𝐏𝐝𝐟 : {pdf_count} | 🏴 𝐈𝐦𝐚𝐠𝐞 : {image_count}\n\n🔘 𝐓𝐢𝐦𝐞 𝐓𝐚𝐤𝐞𝐧 ➥ {formatted_time}\n\n ━━━━━━━━━━━━━━━━━━━━\n ᴇxᴛʀᴀᴄᴛɪᴏɴ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ☑️ **"
                                         
