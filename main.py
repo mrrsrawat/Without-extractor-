@@ -994,36 +994,36 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
             return result
 
             async def fetch_live_videos(course_id):
-            """Fetch live videos from the API."""
-            outputs = []
-            async with aiohttp.ClientSession() as session:
-                try:
-                    url = f"{apiurl}/v2/course/live/list/videos?type=2&entityId={course_id}&limit=9999&offset=0"
-                    async with session.get(url, headers=headers) as response:
-                        j = await response.json()
-                        if "data" in j and "list" in j["data"]:
-                            for video in j["data"]["list"]:
-                                name = video.get("name", "Unknown Video")
-                                video_url = video.get("url", "")
-                                if video_url:
-                                    outputs.append(f"{name}: {video_url}\n")
-                except Exception as e:
-                    print(f"Error fetching live videos: {e}")
+                """Fetch live videos from the API."""
+                outputs = []
+                async with aiohttp.ClientSession() as session:
+                    try:
+                        url = f"{apiurl}/v2/course/live/list/videos?type=2&entityId={course_id}&limit=9999&offset=0"
+                        async with session.get(url, headers=headers) as response:
+                            j = await response.json()
+                            if "data" in j and "list" in j["data"]:
+                                for video in j["data"]["list"]:
+                                    name = video.get("name", "Unknown Video")
+                                    video_url = video.get("url", "")
+                                    if video_url:
+                                        outputs.append(f"{name}: {video_url}\n")
+                    except Exception as e:
+                        print(f"Error fetching live videos: {e}")
 
-            return outputs
+                return outputs
 
             async def write_to_file(extracted_data):
-            """Write data to a text file asynchronously."""
+                """Write data to a text file asynchronously."""
             # Define characters to remove and replace
-            invalid_chars = '\t:/+#|@*.'
+                invalid_chars = '\t:/+#|@*.'
             # Create a clean filename by removing invalid characters and replacing underscore with space
-            clean_name = ''.join(char for char in batch_name if char not in invalid_chars)
-            clean_name = clean_name.replace('_', ' ')
-            file_path = f"{clean_name}.txt"
+                clean_name = ''.join(char for char in batch_name if char not in invalid_chars)
+                clean_name = clean_name.replace('_', ' ')
+                file_path = f"{clean_name}.txt"
             
-            with open(file_path, "w", encoding='utf-8') as file:
-                file.write(''.join(extracted_data))  
-            return file_path
+                with open(file_path, "w", encoding='utf-8') as file:
+                    file.write(''.join(extracted_data))  
+                return file_path
 
         extracted_data, live_videos = await asyncio.gather(
             process_course_contents(batch_id),
