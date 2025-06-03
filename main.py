@@ -941,11 +941,8 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
                                                     clean_batch_name = selected_batch_name.replace("/", "-").replace("|", "-")
                                                     clean_file_name = f"{user_id}_{clean_batch_name}"
                                                 
-                                                    'tutorWebsiteDomain': f'https://{org_code}.courses.store'
-                                                    }
-                                    
-                                  params = {
-                                            else:
+
+                                                else:
                                                     raise Exception("Wrong Index Number")
                                             else:
                                                 raise Exception("Didn't Find Any Course Matching The Search Term")
