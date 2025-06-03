@@ -941,7 +941,11 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
                                                     clean_batch_name = selected_batch_name.replace("/", "-").replace("|", "-")
                                                     clean_file_name = f"{user_id}_{clean_batch_name}"
                                                 
-                                                else:
+                                         'tutorWebsiteDomain': f'https://{org_code}.courses.store'
+                                }
+                                    
+                                params = {
+                                         else:
                                                     raise Exception("Wrong Index Number")
                                             else:
                                                 raise Exception("Didn't Find Any Course Matching The Search Term")
@@ -954,85 +958,81 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
                                     'region': 'IN',
                                     'accept-language': 'EN',
                                     'Api-Version': '22',
-                                    'tutorWebsiteDomain': f'https://{org_code}.courses.store'
-                                }
-                                    
-                                params = {
-                                    'courseId': f'{selected_batch_id}',
+                                      'courseId': f'{selected_batch_id}',
                                 }
 
 # inside your extract_batch function, only replacing process_course_contents
 
-            async def process_course_contents(course_id, folder_id=0, folder_path=""):
-                """Fetch and process course content recursively."""
-                result = []
-                url = f'{apiurl}/v2/course/content/get?courseId={course_id}&folderId={folder_id}'
+                                            async def process_course_contents(course_id, folder_id=0, folder_path=""):
+                                                """Fetch and process course content recursively."""
+                                                result = []
+                                                url = f'{apiurl}/v2/course/content/get?courseId={course_id}&folderId={folder_id}'
 
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(url, headers=headers) as resp:
-                        course_data = await resp.json()
-                        course_data = course_data["data"]["courseContent"]
+                                                async with aiohttp.ClientSession() as session:
+                                                    async with session.get(url, headers=headers) as resp:
+                                                        course_data = await resp.json()
+                                                        course_data = course_data["data"]["courseContent"]
                     
-            tasks = []
-            for item in course_data:
-                content_type = str(item['contentType'])
-                sub_id = item['id']
-                sub_name = item['name']
+                                            tasks = []
+                                            for item in course_data:
+                                                content_type = str(item['contentType'])
+                                                sub_id = item['id']
+                                                sub_name = item['name']
 
-                if content_type in ("2", "3"):  # Video or PDF
-                    url = item["url"]
-                    full_name = f"{folder_path}{sub_name}: {url}\n"
-                    result.append(full_name)
-                elif content_type == "1":  # Folder
-                 new_folder_path = f"{folder_path}{sub_name} - "
-                 tasks.append(process_course_contents(course_id, sub_id, new_folder_path))
+                                                if content_type in ("2", "3"):  # Video or PDF
+                                                    url = item["url"]
+                                                    full_name = f"{folder_path}{sub_name}: {url}\n"
+                                                    result.append(full_name)
+                                                elif content_type == "1":  # Folder
+                                                 new_folder_path = f"{folder_path}{sub_name} - "
+                                                 tasks.append(process_course_contents(course_id, sub_id, new_folder_path))
 
-            sub_contents = await asyncio.gather(*tasks)
-            for sub_content in sub_contents:
-                result.extend(sub_content)
+                                            sub_contents = await asyncio.gather(*tasks)
+                                            for sub_content in sub_contents:
+                                                result.extend(sub_content)
 
-            return result
+                                            return result
 
-            async def fetch_live_videos(course_id):
-                """Fetch live videos from the API."""
-                outputs = []
-                async with aiohttp.ClientSession() as session:
-                    try:
-                        url = f"{apiurl}/v2/course/live/list/videos?type=2&entityId={course_id}&limit=9999&offset=0"
-                        async with session.get(url, headers=headers) as response:
-                            j = await response.json()
-                            if "data" in j and "list" in j["data"]:
-                                for video in j["data"]["list"]:
-                                    name = video.get("name", "Unknown Video")
-                                    video_url = video.get("url", "")
-                                    if video_url:
-                                        outputs.append(f"{name}: {video_url}\n")
-                    except Exception as e:
-                        print(f"Error fetching live videos: {e}")
+                                            async def fetch_live_videos(course_id):
+                                                """Fetch live videos from the API."""
+                                                outputs = []
+                                                async with aiohttp.ClientSession() as session:
+                                                    try:
+                                                        url = f"{apiurl}/v2/course/live/list/videos?type=2&entityId={course_id}&limit=9999&offset=0"
+                                                        async with session.get(url, headers=headers) as response:
+                                                            j = await response.json()
+                                                            if "data" in j and "list" in j["data"]:
+                                                                for video in j["data"]["list"]:
+                                                                    name = video.get("name", "Unknown Video")
+                                                                    video_url = video.get("url", "")
+                                                                    if video_url:
+                                                                        outputs.append(f"{name}: {video_url}\n")
+                                                    except Exception as e:
+                                                        print(f"Error fetching live videos: {e}")
 
-                return outputs
+                                                return outputs
 
-            async def write_to_file(extracted_data):
-                """Write data to a text file asynchronously."""
+                                            async def write_to_file(extracted_data):
+                                                """Write data to a text file asynchronously."""
             # Define characters to remove and replace
-                invalid_chars = '\t:/+#|@*.'
+                                                invalid_chars = '\t:/+#|@*.'
             # Create a clean filename by removing invalid characters and replacing underscore with space
-                clean_name = ''.join(char for char in batch_name if char not in invalid_chars)
-                clean_name = clean_name.replace('_', ' ')
-                file_path = f"{clean_name}.txt"
+                                                clean_name = ''.join(char for char in batch_name if char not in invalid_chars)
+                                                clean_name = clean_name.replace('_', ' ')
+                                                file_path = f"{clean_name}.txt"
             
-                with open(file_path, "w", encoding='utf-8') as file:
-                    file.write(''.join(extracted_data))  
-                return file_path
+                                                with open(file_path, "w", encoding='utf-8') as file:
+                                                    file.write(''.join(extracted_data))  
+                                                return file_path
 
-            extracted_data, live_videos = await asyncio.gather(
-                process_course_contents(batch_id),
-                fetch_live_videos(batch_id)
-            )
+                                            extracted_data, live_videos = await asyncio.gather(
+                                                process_course_contents(batch_id),
+                                                fetch_live_videos(batch_id)
+                                            )
 
-            extracted_data.extend(live_videos)
+                                            extracted_data.extend(live_videos)
 
-            file_path = await write_to_file(extracted_data)
+                                            file_path = await write_to_file(extracted_data)
  
                                         
                                             caption = f"**\n╾───•🚩 𝐉𝐀𝐈 𝐁𝐀𝐉𝐑𝐀𝐍𝐆 𝐁𝐀𝐋𝐈 🚩•───╼\n\n✿༺ 𝔸ℙℙ ℕ𝔸𝕄𝔼 ༻✿ : {App_Name}({org_code})\n\n🔘 𝐁𝐀𝐓𝐂𝐇 𝐍𝐀𝐌𝐄 ➥ {selected_batch_name}\n\n🏴 𝐕𝐢𝐝𝐞𝐨 : {video_count} | 🏴 𝐏𝐝𝐟 : {pdf_count} | 🏴 𝐈𝐦𝐚𝐠𝐞 : {image_count}\n\n🔘 𝐓𝐢𝐦𝐞 𝐓𝐚𝐤𝐞𝐧 ➥ {formatted_time}\n\n ━━━━━━━━━━━━━━━━━━━━\n ᴇxᴛʀᴀᴄᴛɪᴏɴ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ☑️ **"
