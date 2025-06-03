@@ -993,7 +993,7 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
 
             return result
 
-        async def fetch_live_videos(course_id):
+            async def fetch_live_videos(course_id):
             """Fetch live videos from the API."""
             outputs = []
             async with aiohttp.ClientSession() as session:
@@ -1012,7 +1012,7 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
 
             return outputs
 
-        async def write_to_file(extracted_data):
+            async def write_to_file(extracted_data):
             """Write data to a text file asynchronously."""
             # Define characters to remove and replace
             invalid_chars = '\t:/+#|@*.'
